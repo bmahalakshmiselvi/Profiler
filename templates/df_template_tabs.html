@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>data profiling</title>
+
+<script  src="js/jquery-3.2.1.min.js"  ></script>
+<script src="js/tether.min.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="css/bootstrap.min.css" >
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="css/bootstrap-theme.min.css" >
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="js/bootstrap.min.js" ></script>
+<style>
+     .navbar-nav li a:hover {
+      color: #f4511e !important;
+      background-color: #fff !important;
+  }
+</style>
+
+</head>
+<body data-spy="scroll" data-target=".navbar" data-offset="60">
+
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <ul class="nav navbar-nav">
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" >Files
+        <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          {% for file in data %}
+        <li class="nav-item active">
+          <a class="nav-link"href='#{{ file["table"] }}'>{{ file["file_name"] }}</a>
+        </li>
+          {% endfor %}
+        </ul>
+      </li>
+    </ul>
+</div>
+</nav>
+
+
+<div>
+
+
+<div  class="row">
+    {% for file in data %}
+    <div id='{{ file["table"] }}' class="container-fluid" style="padding-top:80px;">
+            <table  class="table table-striped table-bordered ">
+                        <thead>
+                            <tr>
+                                <td colspan="3">Table Name</td>
+                                <th colspan="4">{{ file["file_name"] }}</th>
+                                <td colspan="3">Table Description</td>
+                                <th colspan="2">{{ file["table"] }}</th>
+                            </tr>
+                            <tr>
+                                <th>Field Name</th>
+                                <th>Description</th>
+                                <th>Data Type</th>
+                                <th>Min Value</th>
+                                <th>Max Value</th>
+                                <th># of records</th>
+                                <th>Distinct Count</th>
+                                <th>Distinct %</th>
+                                <th># of records with data in them</th>
+                                <th>Completeness % (H/F)</th>
+                                <th>Pattern Distribution (9 = numeric value, a = lower case character, A = upper case character,あ = East Asian Character # = special character)</th>
+                                <th>Frequency Distribution (unique values present in the field and their frequency)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for col in file["columns"] %}
+                            <tr>
+                                <td>{{ col["column_name"] }}</td>
+                                <td>{{ col["description"] }}</td>
+                                <td>{{ col["data_type"] }}</td>
+                                <td>{{ col["min"] }}</td>
+                                <td>{{ col["max"] }}</td>
+                                <td>{{ col["count"] }}</td>
+                                <td>{{ col["unique_count"] }}</td>
+                                <td>{{ ((col["unique_count"]/col["count"])*100)|round(2) }}%</td>
+                                <td>{{ col["completeness_count"] }}</td>
+                                <td>{{ ((col["completeness_count"]/col["count"])*100)|round(2) }}%</td>
+                                <td>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Pattern</th>
+                                                <th>Distribution</th>
+                                                <th>Percentage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for pd in col["pattern_dist"] %}
+                                            <tr>
+                                                <td>{{ pd }}</td>
+                                                <td>{{ col["pattern_dist"][pd] }}</td>
+                                                <td>{{ (((col["pattern_dist"][pd])/(col["count"]))*100)|round(2) }}%</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </td>
+                                <td>
+                                <table class="table ">
+                                        <thead>
+                                        <tr>
+                                                <th>Values</th>
+                                                <th>Frequency</th>
+                                                <th>Percentage</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for fd in col["freq_dist"] %}
+                                            <tr>
+                                                <td>{{ fd }}</td>
+                                                <td>{{ col["freq_dist"][fd] }}</td>
+                                                <td>{{ (((col["freq_dist"][fd])/(col["count"]))*100)|round(2) }}%</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+</div>
+
+ {% endfor %}
+</div>
+
+
+
+
+
+
+
+
+</div>
+</div>
+</body>
+
+
+
+</html>
